@@ -1,0 +1,71 @@
+version: '3.1'
+services:
+  nginx:
+    image: nginx:1.22.1-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d/
+      - ./www/example.com/:/usr/share/nginx/html
+
+  db:
+    container_name: mariadbproject
+    image: "mariadb"
+    restart: 'always'
+    volumes: 
+      - ./database:/var/lib/mysql/
+      - ./database/db/initdb/:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    networks:
+      - db
+      - backend
+    ports:
+      - "3307:3307"
+    
+
+  phpmyadmin:
+    image: 'phpmyadmin/phpmyadmin:latest'
+    container_name: phpmyadminproject
+    restart: always
+    ports:
+      - "8081:80"
+    networks:
+      - db
+      - backend
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - PMA_HOST = db
+
+  model:
+    container_name: modelapi
+    build: ./modelapi/.
+    ports:
+      - "8800:8000"
+    volumes:
+      - ./modelapi/src/:/modelapi/src/
+    networks:
+      - backend
+
+  webapi:
+    build: ./webapi/.
+    networks:
+      - backend
+      - db
+    ports:
+      - "3031:3031"
+    links:
+      - db
+    volumes:
+      - ./webapi/server/:/webapi/server/
+
+networks:
+  db:
+    driver: bridge
+  backend:
+    driver: bridge
