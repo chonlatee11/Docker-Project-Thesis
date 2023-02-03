@@ -53,6 +53,7 @@ services:
       - backend
 
   webapi:
+    container_name: webapi
     build: ./webapi/.
     networks:
       - backend
