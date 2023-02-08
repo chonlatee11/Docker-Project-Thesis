@@ -4,6 +4,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 const poolCluster = mysql.createPoolCluster();
 poolCluster.add("node0", {
+  // host: "127.0.0.1",
+  // port: "3306",
+  // database: "mymariaDB",
+  // user:"devchon101",
+  // password: "mymariaDB",
+  // charset: "utf8mb4",
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   database: process.env.DB_NAME,

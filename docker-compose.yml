@@ -1,76 +1,60 @@
-version: '3.1'
 services:
-  # nginx:
-  #   image: nginx:1.22.1-alpine
-  #   container_name: nginx
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx/:/etc/nginx/conf.d/
-  #     - ./www/example.com/:/usr/share/nginx/html
-
-  mariadb:
+  mysqldb:
     container_name: mariadbcontainer
     image: "mariadb"
     restart: 'unless-stopped'
     volumes: 
-      - ./database:/var/lib/mysql/
+      - ./database/db:/var/lib/mysql/
       - ./database/db/initdb/:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
       MYSQL_USER: "${MYSQL_USER}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      SERVICE_TAGS: prod
+      SERVICE_NAME: mysqldb
     networks:
-      - db
-      - backend
+      - internalnet
     ports:
-      - "3306:3306"
+      - 3306:3306
     expose:
       - 3306
-    
 
-  phpmyadmin:
-    image: 'phpmyadmin/phpmyadmin:latest'
-    container_name: phpmyadmincontainer
-    restart: always
-    depends_on:
-      - mariadb
+  nodeapp:
+    container_name: nodeappcontainer
+    build: ./nodejswebapi/.
+    image: nodeapp:v1
+    volumes:
+      - $HOME/nodeapp:/code
     ports:
-      - "8080:80"
-    networks:
-      - db
-      - backend
+      - 3000:3000
+    expose:
+      - 3000
     environment:
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - PMA_HOST = mariadb
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_USER: 'devchon'
+      DB_PASSWORD: 'devchon101'
+      DB_NAME: mymariaDB
+      DB_CONNECTION_LIMIT: 20
+      SERVICE_TAGS: prod
+      SERVICE_NAME: nodeappservice
+      SERVER_PORT: 3000
+    depends_on:
+      - mysqldb
+    networks:
+      - internalnet
 
-  # model:
-  #   container_name: modelapi
-  #   build: ./modelapi/.
-  #   ports:
-  #     - "8800:8000"
-  #   volumes:
-  #     - ./modelapi/src/:/modelapi/src/
-  #   networks:
-  #     - backend
-
-  # webapi:
-  #   container_name: webapi
-  #   build: ./webapi/.
-  #   networks:
-  #     - backend
-  #     - db
-  #   ports:
-  #     - "3031:3031"
-  #   links:
-  #     - db
-  #   volumes:
-  #     - ./webapi/server/:/webapi/server/
+# model:
+#   container_name: modelapi
+#   build: ./modelapi/.
+#   ports:
+#     - "8800:8000"
+#   volumes:
+#     - ./modelapi/src/:/modelapi/src/
+#   networks:
+#     - backend
 
 networks:
-  db:
-    driver: bridge
-  backend:
+  internalnet:
     driver: bridge
