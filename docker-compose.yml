@@ -4,7 +4,7 @@ services:
     image: "mariadb"
     restart: 'unless-stopped'
     volumes: 
-      - ./database/db:/var/lib/mysql/
+      - $HOME/database:/var/lib/mysql/
       - ./database/db/initdb/:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
