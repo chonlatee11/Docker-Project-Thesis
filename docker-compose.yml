@@ -45,16 +45,18 @@ services:
     networks:
       - internalnet
 
-# model:
-#   container_name: modelapi
-#   build: ./modelapi/.
-#   ports:
-#     - "8800:8000"
-#   volumes:
-#     - ./modelapi/src/:/modelapi/src/
-#   networks:
-#     - backend
+  model:
+    container_name: modelapi
+    build: ./modelapi/.
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./modelapi/src/:/modelapi/src/
+    networks:
+      - webproxy
 
 networks:
   internalnet:
+    driver: bridge
+  webproxy:
     driver: bridge

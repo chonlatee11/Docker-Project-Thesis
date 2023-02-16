@@ -3,6 +3,6 @@ fastapi
 uvicorn
 numpy
 pydantic
-Pillow
 tensorflow
 python-multipart
+opencv-python

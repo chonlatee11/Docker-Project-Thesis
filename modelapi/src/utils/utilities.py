@@ -1,21 +1,36 @@
-from PIL import Image
-from io import BytesIO
-import base64
+import cv2 
+import imghdr
+from tempfile import NamedTemporaryFile
 import os
-import requests
-
-# def load_image(img_url):
-#     try:
-#         img = Image.open(requests.get(img_url, stream=True).raw)
-#         return img
-#     except Exception as e:
-#         print(e)
-#         print("image could not be opened")
 
 def load_image(img):
     try:
-        img = Image.open(img)
+        # Get the file extension
+        file_ext = imghdr.what(None, h=img.getvalue())
+        if not file_ext:
+            raise ValueError("Invalid image file")
+
+        # Save the BytesIO object to a temporary file
+        with NamedTemporaryFile(suffix=f".{file_ext}", delete=False) as f:
+            f.write(img.getbuffer())
+            tmp_filename = f.name
+
+        # Read the image using OpenCV
+        img = cv2.imread(tmp_filename, cv2.COLOR_BGR2RGB)
+
+        # Return the image
         return img    
     except Exception as e:
         print(e)
         print("image could not be opened")
+    finally:
+        # Delete the temporary file
+        os.remove(tmp_filename)
+    # try:
+    #     cv2.imread(img)
+    #     # img = np.array(Image.open(img))
+    #     # img = Image.open(img)
+    #     return img    
+    # except Exception as e:
+    #     print(e)
+    #     print("image could not be opened")

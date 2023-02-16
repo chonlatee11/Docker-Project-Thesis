@@ -1,35 +1,38 @@
 from src.utils.utilities import *
 # from utils.utilities import *
-import os
-import sys
 import tensorflow as tf
-import tensorflow_hub as hub
 import numpy as np 
+import cv2
 
 IMAGE_SHAPE = (128, 128)
 
 #load model
 def load_model():
     # myModel = "/model/model/"
-    myModel = ('src/pred/models/model')
-    print(myModel)
-    classifier_model = myModel
-    classifier = tf.keras.Sequential([
-        hub.KerasLayer(classifier_model, input_shape=IMAGE_SHAPE + (3,))
-    ])
+    # myModel = ('src/pred/models/model')
+    # print(myModel)
+    classifier = tf.keras.models.load_model('src/pred/models/model')
     print("Model loaded")
     return classifier
 
 #preprocess image
 def preprocess_img(img):
-    img = img.resize(IMAGE_SHAPE)
-    img = np.array(img) / 255
-    return img
+
+    rimg = cv2.resize(img, (128, 128))
+    oimg = np.array(rimg)
+    oimg = oimg.astype('float32')
+    oimg /= 255.00
+    oimg = np.reshape(oimg ,(1,128,128,3))
+    # img = img.resize(IMAGE_SHAPE)
+    # rimg = np.array(img)
+    # rimg = rimg.astype('float32')
+    # rimg /= 255.00
+    # rimg = np.reshape(rimg ,(1,128,128,3))
+    return oimg
 
 #load labels
 def load_labels():
-    labels_path = ['BlackDot', 'BlackWhip','LeafBurn','RedLine','RingLeaf','RustMold','StreakMosaic','YellowLeaf']
-    imagenet_labels = np.array(labels_path)
+    imagenet_labels = ['BlackDot', 'BlackWhip','LeafBurn','RedLine','RingLeaf','RustMold','StreakMosaic','YellowLeaf']
     print("Labels loaded")
     # print(imagenet_labels)
     return imagenet_labels
@@ -38,16 +41,14 @@ def load_labels():
 def tf_predict(img_original):
     img = preprocess_img(img_original)
     model = load_model()
-    result = model.predict(img[np.newaxis, ...])
-    predicted_class = tf.math.argmax(result[0], axis=-1)
-    scores = tf.nn.softmax(result[0])
-    print(scores)
-    probability = np.max(scores * 100)
+    result = model.predict(img)
+    print(result)
+    probability = np.max(result * 100)
 
     imagenet_labels = load_labels()
     print(imagenet_labels)
     print(model)
-    predicted_class_name = imagenet_labels[predicted_class]
+    predicted_class_name = imagenet_labels[np.argmax(result)]
 
     return {"predicted_label": predicted_class_name,
             "probability": probability.item()}
