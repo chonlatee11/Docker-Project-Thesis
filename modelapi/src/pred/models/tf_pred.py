@@ -8,9 +8,6 @@ IMAGE_SHAPE = (128, 128)
 
 #load model
 def load_model():
-    # myModel = "/model/model/"
-    # myModel = ('src/pred/models/model')
-    # print(myModel)
     classifier = tf.keras.models.load_model('src/pred/models/model')
     print("Model loaded")
     return classifier
@@ -23,11 +20,6 @@ def preprocess_img(img):
     oimg = oimg.astype('float32')
     oimg /= 255.00
     oimg = np.reshape(oimg ,(1,128,128,3))
-    # img = img.resize(IMAGE_SHAPE)
-    # rimg = np.array(img)
-    # rimg = rimg.astype('float32')
-    # rimg /= 255.00
-    # rimg = np.reshape(rimg ,(1,128,128,3))
     return oimg
 
 #load labels

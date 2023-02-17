@@ -1,7 +1,7 @@
-import cv2 
 import imghdr
 from tempfile import NamedTemporaryFile
 import os
+import cv2 
 
 def load_image(img):
     try:
@@ -26,11 +26,3 @@ def load_image(img):
     finally:
         # Delete the temporary file
         os.remove(tmp_filename)
-    # try:
-    #     cv2.imread(img)
-    #     # img = np.array(Image.open(img))
-    #     # img = Image.open(img)
-    #     return img    
-    # except Exception as e:
-    #     print(e)
-    #     print("image could not be opened")

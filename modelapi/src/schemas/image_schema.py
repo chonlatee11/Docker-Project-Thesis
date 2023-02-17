@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-
 class Img(BaseModel):
     uri: str
     type: str
