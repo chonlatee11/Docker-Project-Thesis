@@ -1,51 +1,77 @@
 services:
-  # mysqldb:
-  #   container_name: mariadbcontainer
-  #   image: "mariadb"
-  #   restart: 'unless-stopped'
-  #   volumes: 
-  #     - $HOME/database:/var/lib/mysql/
-  #     - ./database/db/initdb/:/docker-entrypoint-initdb.d
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-  #     MYSQL_DATABASE: "${MYSQL_DATABASE}"
-  #     MYSQL_USER: "${MYSQL_USER}"
-  #     MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
-  #     SERVICE_TAGS: prod
-  #     SERVICE_NAME: mysqldb
-  #   networks:
-  #     - internalnet
-  #   ports:
-  #     - 3306:3306
-  #   expose:
-  #     - 3306
+  mysqldb:
+    container_name: mariadbcontainer
+    image: "mariadb"
+    restart: 'unless-stopped'
+    volumes: 
+      # - $HOME/database:/var/lib/mysql/
+      - ./databasevol:/var/lib/mysql/
+      - ./database/db/initdb/:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      SERVICE_TAGS: prod
+      SERVICE_NAME: mysqldb
+    networks:
+      - internalnet
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
 
-  # nodeapp:
-  #   container_name: nodeappcontainer
-  #   build: ./nodejswebapi/.
-  #   image: nodeapp:v1
-  #   volumes:
-  #     - $HOME/nodeappweb:/code
-  #   ports:
-  #     - 3000:3000
-  #   expose:
-  #     - 3000
-  #   environment:
-  #     DB_HOST: mysqldb
-  #     DB_PORT: 3306
-  #     DB_USER: 'devchon'
-  #     DB_PASSWORD: 'devchon101'
-  #     DB_NAME: mymariaDB
-  #     DB_CONNECTION_LIMIT: 20
-  #     SERVICE_TAGS: prod
-  #     SERVICE_NAME: nodeappservice
-  #     SERVER_PORT: 3000
-  #   depends_on:
-  #     - mysqldb
-  #   networks:
-  #     - internalnet
+  nodeappweb:
+    container_name: nodeappcontainer
+    build: ./nodejswebapi/.
+    image: nodeapp:v1
+    volumes:
+      - $HOME/nodeappweb:/code
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    environment:
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_USER: 'devchon'
+      DB_PASSWORD: 'devchon101'
+      DB_NAME: mymariaDB
+      DB_CONNECTION_LIMIT: 20
+      SERVICE_TAGS: prod
+      SERVICE_NAME: nodeappservice
+      SERVER_PORT: 3000
+    depends_on:
+    - mysqldb
+    networks:
+      - internalnet
 
-  modelapp:
+  nodeappmobile:
+    container_name: nodeappcontainer
+    build: ./nodejswebapi/.
+    image: nodeapp:v1
+    volumes:
+      - $HOME/nodeappweb:/code
+    ports:
+      - 3001:3001
+    expose:
+      - 3001
+    environment:
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_USER: 'devchon'
+      DB_PASSWORD: 'devchon101'
+      DB_NAME: mymariaDB
+      DB_CONNECTION_LIMIT: 20
+      SERVICE_TAGS: prod
+      SERVICE_NAME: nodeappservice
+      SERVER_PORT: 3001
+    depends_on:
+      - mysqldb
+    networks:
+      - internalnet
+
+  mdelapp:
     container_name: modelapicontainer
     build: ./modelapi/.
     ports:

@@ -15,7 +15,7 @@ const app = express();
 const secret = process.env.SECRET;
 app.use(cors({ origin: "*" }));
 
-app.get("/", (req, res) => {
+app.get("/", (res) => {
   res.send("Hello World!");
 });
 
@@ -39,7 +39,7 @@ app.post("/loginADMIN", jsonParser, function (req, res, next) {
             for (let index = 0; index < rows.length; index++) {
               const element = rows[index];
               if (req.body.email == "admin" && req.body.password == "admin") {
-                var token = jwt.sign({ email: element.email }, secret, {
+                let token = jwt.sign({ email: element.email }, secret, {
                   expiresIn: "1h",
                 });
                 // console.log(element.Email);
@@ -62,7 +62,7 @@ app.post("/loginADMIN", jsonParser, function (req, res, next) {
                     }
                     if (result == true) {
                       //   console.log("password match");
-                      var token = jwt.sign({ email: element.Email }, secret, {
+                      let token = jwt.sign({ email: element.Email }, secret, {
                         expiresIn: "1h",
                       });
                       res.json({
@@ -452,7 +452,7 @@ app.post("/ResearcherLogin", jsonParser, function (req, res, next) {
                   }
                   if (result == true) {
                     //   console.log("password match");
-                    var token = jwt.sign({ Email: element.Email }, secret, {
+                    let token = jwt.sign({ Email: element.Email }, secret, {
                       expiresIn: "1h",
                     });
                     res.json({
