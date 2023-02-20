@@ -14,10 +14,9 @@ const PORT = process.env.SERVER_PORT || 3000;
 const app = express();
 const secret = process.env.SECRET;
 app.use(cors({ origin: "*" }));
+app.use(express.json());
 
-app.get("/", (res) => {
-  res.send("Hello World!");
-});
+app.get("/",(res) => { res.send( {message: 'UP'}) })
 
 app.post("/loginADMIN", jsonParser, function (req, res, next) {
   //   console.log(req.body);

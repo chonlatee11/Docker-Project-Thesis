@@ -22,9 +22,9 @@ services:
       - 3306
 
   nodeappweb:
-    container_name: nodeappcontainer
+    container_name: nodewebcontainer
     build: ./nodejswebapi/.
-    image: nodeapp:v1
+    image: nodewebapp:v1
     volumes:
       # - $HOME/nodeappweb:/code
       - ./nodewebvol:/code
@@ -48,9 +48,9 @@ services:
       - internalnet
 
   nodeappmobile:
-    container_name: nodeappcontainer
-    build: ./nodejswebapi/.
-    image: nodeapp:v1
+    container_name: nodemobilecontainer
+    build: ./nodejsmobileapi/.
+    image: nodemobileapp:v1
     volumes:
       # - $HOME/nodeappweb:/code
       - ./nodemobilevol:/code
@@ -79,7 +79,8 @@ services:
     ports:
       - "3004:3004"
     volumes:
-      - $HOME/modelapi:/modelapi/src/
+      # - $HOME/modelapi:/modelapi/src/
+      - ./modelapivol:/modelapi/src/
     networks:
       - webproxy
 

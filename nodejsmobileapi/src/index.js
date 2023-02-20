@@ -14,10 +14,9 @@ const PORT = process.env.SERVER_PORT || 3001;
 const app = express();
 const secret = process.env.SECRET;
 app.use(cors({ origin: "*" }));
+app.use(express.json());
 
-app.get("/", (res) => {
-  res.send("Hello World!");
-});
+app.get("/",(res) => { res.send( {message: 'UP'}) })
 
 app.post("/register", jsonParser, function (req, res) {
     // console.log(req.body);
