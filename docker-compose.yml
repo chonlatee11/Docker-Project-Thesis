@@ -26,7 +26,8 @@ services:
     build: ./nodejswebapi/.
     image: nodeapp:v1
     volumes:
-      - $HOME/nodeappweb:/code
+      # - $HOME/nodeappweb:/code
+      - ./nodewebvol:/code
     ports:
       - 3000:3000
     expose:
@@ -51,7 +52,8 @@ services:
     build: ./nodejswebapi/.
     image: nodeapp:v1
     volumes:
-      - $HOME/nodeappweb:/code
+      # - $HOME/nodeappweb:/code
+      - ./nodemobilevol:/code
     ports:
       - 3001:3001
     expose:
@@ -71,7 +73,7 @@ services:
     networks:
       - internalnet
 
-  mdelapp:
+  modelapp:
     container_name: modelapicontainer
     build: ./modelapi/.
     ports:
