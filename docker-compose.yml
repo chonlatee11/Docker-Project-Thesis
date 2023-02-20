@@ -25,6 +25,7 @@ services:
     container_name: nodewebcontainer
     build: ./nodejswebapi/.
     image: nodewebapp:v1
+    restart: 'unless-stopped'
     volumes:
       # - $HOME/nodeappweb:/code
       - ./nodewebvol:/code
@@ -51,6 +52,7 @@ services:
     container_name: nodemobilecontainer
     build: ./nodejsmobileapi/.
     image: nodemobileapp:v1
+    restart: 'unless-stopped'
     volumes:
       # - $HOME/nodeappweb:/code
       - ./nodemobilevol:/code
@@ -75,6 +77,7 @@ services:
 
   modelapp:
     container_name: modelapicontainer
+    restart: 'unless-stopped'
     build: ./modelapi/.
     ports:
       - "3004:3004"
