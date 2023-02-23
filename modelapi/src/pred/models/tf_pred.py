@@ -8,7 +8,7 @@ IMAGE_SHAPE = (128, 128)
 
 #load model
 def load_model():
-    classifier = tf.keras.models.load_model('src/pred/models/model')
+    classifier = tf.keras.models.load_model('src/pred/models/model/my_model.h5')
     print("Model loaded")
     return classifier
 
