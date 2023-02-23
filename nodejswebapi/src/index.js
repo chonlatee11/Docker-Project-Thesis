@@ -362,7 +362,7 @@ app.get("/getResearch", jsonParser, function (req, res) {
 
 app.put("/HistoryDiseaseModify", jsonParser, function (req, res, next) {
   //   console.log(req.body);
-  let imagelink = "http://127.0.0.1:3032/image/" + req.body.ImageNameUpdate;
+  let imagelink = "http://127.0.0.1:3002/image/" + req.body.ImageNameUpdate;
   database.getConnection(function (err, connection) {
     if (err) {
       //   console.log(err);
@@ -500,7 +500,7 @@ app.get("/DiseaseAllReport", jsonParser, function (req, res) {
             // console.log(data.length);
             for (let i = 0; i < data.length; i++) {
               data[i].ImageUrl =
-                "http://127.0.0.1:3032/image/" + data[i].DiseaseImage;
+                "http://127.0.0.1:3002/image/" + data[i].DiseaseImage;
             }
             res.json({ data });
             connection.release();
