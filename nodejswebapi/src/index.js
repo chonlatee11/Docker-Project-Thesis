@@ -5,18 +5,20 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import database from "./config/mysql.config.js";
+import { sendMailAdmin, sendMailResearch } from "./mail/sendmail.js";
 import logger from "./util/logger.js";
 import bodyParser from "body-parser";
 const jsonParser = bodyParser.json();
 
 dotenv.config();
 const PORT = process.env.SERVER_PORT || 3000;
+const myip = process.env.IP;
 const app = express();
 const secret = process.env.SECRET;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-app.get("/",(res) => { res.send( {message: 'UP'}) })
+app.get("/",(req, res) => { res.send("SERVER IS UP") });
 
 app.post("/loginADMIN", jsonParser, function (req, res, next) {
   //   console.log(req.body);
@@ -47,6 +49,7 @@ app.post("/loginADMIN", jsonParser, function (req, res, next) {
                   token,
                   email: element.Email,
                   AdminID: 1,
+                  emailVerify: "Verify",
                 });
                 connection.release();
               } else {
@@ -69,6 +72,7 @@ app.post("/loginADMIN", jsonParser, function (req, res, next) {
                         status: "AdminLogin",
                         token,
                         AdminID: element.adminID,
+                        emailVerify: element.EmailVerify,
                       });
                       connection.release();
                     } else {
@@ -128,6 +132,37 @@ app.put("/AddAdmin", jsonParser, function (req, res, next) {
   });
 });
 
+app.post('/send-email/admin', function(req, res) {
+  const emailDestination = req.body.email;
+  sendMailAdmin(emailDestination, res)
+});
+
+app.get('/verify/admin:token', function(req, res) {
+  const token = req.params.token;
+  jwt.verify(token, secret, function(err, decoded) {
+    if (err) {
+      // console.log(err);
+      return res.send('Error: ' + err.message);
+    }
+    const email = decoded.emailDestination;
+    // console.log("🚀 ~ file: index.js:160 ~ jwt.verify ~ email:", email)
+    database.getConnection(function(err, connection) {
+      if (err) {
+        // console.log(err);
+        return res.send('เกิดข้อผิดพลาด' + err.message);
+      }
+    connection.query('UPDATE `Admin` SET `EmailVerify` = ? WHERE `Admin`.`Email` = ?', ['Verify' ,email], function(error) {
+      if (error) {
+        // console.log(error);
+        return res.send('เกิดข้อผิดพลาด: ' + error.message);
+      }
+      // console.log('User registered:', email);
+      res.send('ยืนยันอีเมลสำเร็จ');
+    });
+  });
+});
+});
+
 app.delete("/deleteAdmin", jsonParser, function (req, res, next) {
   //   console.log(req.body);
   database.getConnection(function (err, connection) {
@@ -171,13 +206,14 @@ app.patch("/updateAdmin", jsonParser, function (req, res, next) {
           connection.release();
         } else {
           connection.query(
-            "UPDATE `Admin` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `modifydate` = ? WHERE `Admin`.`Email` = ?",
+            "UPDATE `Admin` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `modifydate` = ?, `EmailVerify` = ? WHERE `Admin`.`Email` = ?",
             [
               req.body.fname,
               req.body.lname,
               req.body.emailupdate,
               hash,
               req.body.modifydate,
+              req.body.EmailVerify,
               req.body.email,
             ],
             function (err) {
@@ -264,6 +300,37 @@ app.put("/AddResearch", jsonParser, function (req, res, next) {
   });
 });
 
+app.post('/send-email/research', function(req, res) {
+  const emailDestination = req.body.email;
+  sendMailResearch(emailDestination, res)
+});
+
+app.get('/verify/research:token', function(req, res) {
+  const token = req.params.token;
+  jwt.verify(token, secret, function(err, decoded) {
+    if (err) {
+      // console.log(err);
+      return res.send('Error: ' + err.message);
+    }
+    const email = decoded.emailDestination;
+    // console.log("🚀 ~ file: index.js:160 ~ jwt.verify ~ email:", email)
+    database.getConnection(function(err, connection) {
+      if (err) {
+        // console.log(err);
+        return res.send('เกิดข้อผิดพลาด' + err.message);
+      }
+    connection.query('UPDATE `Researcher` SET `EmailVerify` = ? WHERE `Researcher`.`Email` = ?', ['Verify' ,email], function(error) {
+      if (error) {
+        // console.log(error);
+        return res.send('เกิดข้อผิดพลาด: ' + error.message);
+      }
+      // console.log('User registered:', email);
+      res.send('ยืนยันอีเมลสำเร็จ');
+    });
+  });
+});
+});
+
 app.delete("/deleteResearch", jsonParser, function (req, res, next) {
   //   console.log(req.body);
   database.getConnection(function (err, connection) {
@@ -291,11 +358,11 @@ app.delete("/deleteResearch", jsonParser, function (req, res, next) {
 });
 
 app.patch("/updateResearch", jsonParser, function (req, res, next) {
-  console.log(req.body);
+  // console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
   bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
-    console.log(hash);
+    // console.log(hash);
     if (err) {
       //   console.log(err);
       res.json({ err });
@@ -307,13 +374,14 @@ app.patch("/updateResearch", jsonParser, function (req, res, next) {
           connection.release();
         } else {
           connection.query(
-            "UPDATE `Researcher` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `Modifydate` = ? WHERE `Researcher`.`Email` = ?",
+            "UPDATE `Researcher` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Researcher`.`Email` = ?",
             [
               req.body.fname,
               req.body.lname,
               req.body.emailupdate,
               hash,
               req.body.modifydate,
+              req.body.EmailVerify,
               req.body.email,
             ],
             function (err) {
@@ -321,7 +389,7 @@ app.patch("/updateResearch", jsonParser, function (req, res, next) {
                 res.json({ err });
                 connection.release();
               } else {
-                console.log("update success");
+                // console.log("update success");
                 res.json({ status: "success" });
                 connection.release();
               }
@@ -362,7 +430,7 @@ app.get("/getResearch", jsonParser, function (req, res) {
 
 app.put("/HistoryDiseaseModify", jsonParser, function (req, res, next) {
   //   console.log(req.body);
-  let imagelink = "http://127.0.0.1:3002/image/" + req.body.ImageNameUpdate;
+  const imagelink = `${myip}:3002/image/` + req.body.ImageNameUpdate;
   database.getConnection(function (err, connection) {
     if (err) {
       //   console.log(err);
@@ -459,6 +527,7 @@ app.post("/ResearcherLogin", jsonParser, function (req, res, next) {
                       status: "ResearcherLogin",
                       token,
                       ReseachID: element.researcherID,
+                      emailVerify: element.EmailVerify,
                     });
                     connection.release();
                   } else {
@@ -500,7 +569,7 @@ app.get("/DiseaseAllReport", jsonParser, function (req, res) {
             // console.log(data.length);
             for (let i = 0; i < data.length; i++) {
               data[i].ImageUrl =
-                "http://127.0.0.1:3002/image/" + data[i].DiseaseImage;
+                `${myip}:3002/image/` + data[i].DiseaseImage;
             }
             res.json({ data });
             connection.release();
@@ -520,38 +589,7 @@ app.post("/getSelectUser", jsonParser, function (req, res) {
       connection.release();
     } else {
       connection.query(
-        "SELECT * FROM `User` WHERE fName LIKE ? OR lName LIKE ?;",
-        [req.body.Name, req.body.Name],
-        function (err, data) {
-          if (err) {
-            res.json({ err });
-            connection.release();
-          } else {
-            // console.log(data.length);
-            if (data.length == 0) {
-              res.json({ data: 401, status: 401 });
-              connection.release();
-            } else {
-              res.json({ data });
-              connection.release();
-            }
-          }
-        }
-      );
-    }
-  });
-});
-
-app.post("/getSelectDesease", jsonParser, function (req, res) {
-  //   console.log(req.body);
-  database.getConnection(function (err, connection) {
-    if (err) {
-      //   console.log(err);
-      res.json({ err });
-      connection.release();
-    } else {
-      connection.query(
-        "SELECT * FROM `DiseaseReport` WHERE DiseaseName LIKE ?;",
+        "SELECT USER.*, COUNT(DiseaseReport.ReportID) AS ReportCount FROM `User` USER LEFT JOIN DiseaseReport ON USER.UserID = DiseaseReport.UserID WHERE USER.fName LIKE ? OR USER.lName LIKE ? GROUP BY USER.UserID;",
         [req.body.Name, req.body.Name],
         function (err, data) {
           if (err) {

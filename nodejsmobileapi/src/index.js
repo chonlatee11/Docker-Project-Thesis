@@ -16,7 +16,7 @@ const secret = process.env.SECRET;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-app.get("/",(res) => { res.send( {message: 'UP'}) })
+app.get("/",(req, res) => { res.send("SERVER IS UP") });
 
 app.post("/register", jsonParser, function (req, res) {
     // console.log(req.body);
