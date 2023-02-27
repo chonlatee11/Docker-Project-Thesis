@@ -41,7 +41,7 @@ services:
       DB_NAME: mymariaDB
       DB_CONNECTION_LIMIT: 20
       SERVICE_TAGS: prod
-      SERVICE_NAME: nodeappservice
+      SERVICE_NAME: nodeappwebservice
       SERVER_PORT: 3000
     depends_on:
     - mysqldb
@@ -68,8 +68,36 @@ services:
       DB_NAME: mymariaDB
       DB_CONNECTION_LIMIT: 20
       SERVICE_TAGS: prod
-      SERVICE_NAME: nodeappservice
+      SERVICE_NAME: nodeappmobileservice
       SERVER_PORT: 3001
+    depends_on:
+      - mysqldb
+    networks:
+      - internalnet
+
+  nodeappimage:
+    container_name: nodeimagecontainer
+    build: ./nodejsimageapi/.
+    image: nodeimageapp:v1
+    restart: 'unless-stopped'
+    volumes:
+      # - $HOME/nodeimagevol:/code
+      # - $HOME/nodeimagevol/image:/code/src/image/
+      - ./nodeimagevol/image:/usr/code/src/image/
+    ports:
+      - 3002:3002
+    expose:
+      - 3002
+    environment:
+      DB_HOST: mysqldb
+      DB_PORT: 3306
+      DB_USER: 'devchon'
+      DB_PASSWORD: 'devchon101'
+      DB_NAME: mymariaDB
+      DB_CONNECTION_LIMIT: 20
+      SERVICE_TAGS: prod
+      SERVICE_NAME: nodeappimageservice
+      SERVER_PORT: 3002
     depends_on:
       - mysqldb
     networks:
@@ -86,6 +114,20 @@ services:
       - ./modelapivol:/modelapi/src/
     networks:
       - webproxy
+
+  phpmyadmin:
+    image: 'phpmyadmin/phpmyadmin'
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    networks:
+      - internalnet
+    environment:
+        PMA_HOST: mysqldb
+        TZ: Asia/Bangkok
+    depends_on:
+        - mysqldb
 
 networks:
   internalnet:
