@@ -165,6 +165,29 @@ app.post("/register", jsonParser, function (req, res) {
     });
   });
 
+  app.get("/getUser", function (req, res) {
+    database.getConnection(function (err, connection) {
+      if (err) {
+        // console.log(err);
+        res.json({ err });
+        connection.release();
+      } else {
+        connection.query("SELECT UserName FROM User", function (err, rows) {
+          if (err) {
+            // console.log(err);
+            res.json({ err });
+            connection.release();
+          } else {
+            const data = rows ;
+            res.json({ data });
+            connection.release();
+          }
+        });
+      }
+    });
+  }
+  );
+
 app.listen(PORT, () =>
   logger.info(`Server running on : ${ip.address()}:${PORT}`)
 );

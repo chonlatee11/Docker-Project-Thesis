@@ -373,6 +373,8 @@ app.get("/getDisease", jsonParser, function (req, res, next) {
   app.put("/ReportDisease", jsonParser, function (req, res) {
     // console.log(req.body);
     let ts = new Date().toLocaleDateString();
+    let sampleFile;
+    let uploadPath;
     database.getConnection(function (err, connection) {
       if (err) {
         // console.log(err);
