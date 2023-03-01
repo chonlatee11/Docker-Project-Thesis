@@ -188,6 +188,74 @@ app.post("/register", jsonParser, function (req, res) {
   }
   );
 
+  app.get("/getProvince", function (req, res) {
+    database.getConnection(function (err, connection) {
+      if (err) {
+        // console.log(err);
+        res.json({ err });
+        connection.release();
+      } else {
+        connection.query("SELECT * FROM `thai_provinces`;", function (err, rows) {
+          if (err) {
+            // console.log(err);
+            res.json({ err });
+            connection.release();
+          } else {
+            const data = rows ;
+            res.json({ data });
+            connection.release();
+          }
+        });
+      }
+    });
+  });
+
+  app.post("/getAmphures", function (req, res) {
+    database.getConnection(function (err, connection) {
+      if (err) {
+        // console.log(err);
+        res.json({ err });
+        connection.release();
+      } else {
+        connection.query("SELECT Ampures.* FROM thai_amphures Ampures LEFT JOIN thai_provinces ON Ampures.province_id = thai_provinces.id WHERE thai_provinces.name_en = ?;",
+        [req.body.province], function (err, rows) {
+          if (err) {
+            // console.log(err);
+            res.json({ err });
+            connection.release();
+          } else {
+            const data = rows ;
+            res.json({ data });
+            connection.release();
+          }
+        });
+      }
+    });
+  });
+
+  app.post("/getTambons", function (req, res) {
+    database.getConnection(function (err, connection) {
+      if (err) {
+        // console.log(err);
+        res.json({ err });
+        connection.release();
+      } else {
+        connection.query("SELECT Tambons.* FROM thai_tambons Tambons LEFT JOIN thai_amphures ON Tambons.amphure_id = thai_amphures.id WHERE thai_amphures.name_en = ?;",
+        [req.body.amphures], function (err, rows) {
+          if (err) {
+            // console.log(err);
+            res.json({ err });
+            connection.release();
+          } else {
+            const data = rows ;
+            res.json({ data });
+            connection.release();
+          }
+        });
+      }
+    });
+  });
+
 app.listen(PORT, () =>
   logger.info(`Server running on : ${ip.address()}:${PORT}`)
 );
