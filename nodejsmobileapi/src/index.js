@@ -18,8 +18,9 @@ app.use(express.json());
 
 app.get("/",(req, res) => { res.send("SERVER IS UP") });
 
-app.post("/register", jsonParser, function (req, res) {
+app.put("/register", jsonParser, function (req, res) {
     // console.log(req.body);
+    // res.json({ status: "success" });
     const saltRounds = 10;
     const myPlaintextPassword = req.body.passWord;
     bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
@@ -35,16 +36,20 @@ app.post("/register", jsonParser, function (req, res) {
             connection.release();
           } else {
             connection.query(
-              "INSERT INTO User (UserName, Password, fName, lName, PhoneNumber, Address, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+              "INSERT INTO User (UserName, Password, fName, lName, PhoneNumber, latitude, longitude, province, district, subDistrict, zipCode, detailAddress) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
               [
                 req.body.userName,
                 hash,
                 req.body.fName,
                 req.body.lName,
                 req.body.phoneNumber,
-                req.body.address,
                 req.body.latitude,
                 req.body.longitude,
+                req.body.province,
+                req.body.district,
+                req.body.subDistrict,
+                req.body.zipCode,
+                req.body.detailAddress,
               ],
               function (err) {
                 if (err) {
@@ -63,8 +68,7 @@ app.post("/register", jsonParser, function (req, res) {
   });
   
   app.post("/login", jsonParser, function (req, res) {
-    // console.log(req.body);
-  
+    // console.log(req.body
     database.getConnection(function (err, connection) {
       if (err) {
         // console.log(err);
@@ -217,7 +221,7 @@ app.post("/register", jsonParser, function (req, res) {
         res.json({ err });
         connection.release();
       } else {
-        connection.query("SELECT Ampures.* FROM thai_amphures Ampures LEFT JOIN thai_provinces ON Ampures.province_id = thai_provinces.id WHERE thai_provinces.name_en = ?;",
+        connection.query("SELECT Ampures.* FROM thai_amphures Ampures LEFT JOIN thai_provinces ON Ampures.province_id = thai_provinces.id WHERE thai_provinces.name_th = ?;",
         [req.body.province], function (err, rows) {
           if (err) {
             // console.log(err);
@@ -240,7 +244,7 @@ app.post("/register", jsonParser, function (req, res) {
         res.json({ err });
         connection.release();
       } else {
-        connection.query("SELECT Tambons.* FROM thai_tambons Tambons LEFT JOIN thai_amphures ON Tambons.amphure_id = thai_amphures.id WHERE thai_amphures.name_en = ?;",
+        connection.query("SELECT Tambons.* FROM thai_tambons Tambons LEFT JOIN thai_amphures ON Tambons.amphure_id = thai_amphures.id WHERE thai_amphures.name_th = ?;",
         [req.body.amphures], function (err, rows) {
           if (err) {
             // console.log(err);
