@@ -550,35 +550,7 @@ app.post("/ResearcherLogin", jsonParser, function (req, res, next) {
   });
 });
 
-app.get("/DiseaseAllReport", jsonParser, function (req, res) {
-  //   console.log(req.body);
-  database.getConnection(function (err, connection) {
-    if (err) {
-      //   console.log(err);
-      res.json({ err });
-      connection.release();
-    } else {
-      connection.query(
-        "SELECT DS.* , Disease.colorShow FROM DiseaseReport DS LEFT JOIN Disease ON DS.DiseaseID = Disease.DiseaseID",
-        [req.body.userID],
-        function (err, data) {
-          if (err) {
-            res.json({ err });
-            connection.release();
-          } else {
-            // console.log(data.length);
-            for (let i = 0; i < data.length; i++) {
-              data[i].ImageUrl =
-                `${myip}:3002/image/` + data[i].DiseaseImage;
-            }
-            res.json({ data });
-            connection.release();
-          }
-        }
-      );
-    }
-  });
-});
+
 
 app.post("/getSelectUser", jsonParser, function (req, res) {
   //   console.log(req.body);

@@ -216,29 +216,27 @@ app.get("/getDisease", jsonParser, function (req, res, next) {
     });
   });
   
-  app.get("/diseaseallreport", jsonParser, function (req, res) {
-    // console.log(req.body);
+  app.get("/DiseaseAllReport", jsonParser, function (req, res) {
+    //   console.log(req.body);
     database.getConnection(function (err, connection) {
       if (err) {
-        // console.log(err);
+        //   console.log(err);
         res.json({ err });
         connection.release();
       } else {
         connection.query(
-          "SELECT * FROM DiseaseReport",
-          [req.body.userID],
+          "SELECT DS.* , Disease.colorShow FROM DiseaseReport DS LEFT JOIN Disease ON DS.DiseaseID = Disease.DiseaseID",
           function (err, data) {
             if (err) {
               res.json({ err });
               connection.release();
             } else {
-              console.log(data.length);
+              // console.log(data.length);
               for (let i = 0; i < data.length; i++) {
                 data[i].ImageUrl =
                   `${myip}:3002/image/` + data[i].DiseaseImage;
               }
               res.json({ data });
-              // connection.end();
               connection.release();
             }
           }
