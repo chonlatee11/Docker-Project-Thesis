@@ -358,47 +358,84 @@ app.delete("/deleteResearch", jsonParser, function (req, res, next) {
 });
 
 app.patch("/updateResearch", jsonParser, function (req, res, next) {
-  // console.log(req.body);
+  // console.log(req.body.passWord);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
-  bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
-    // console.log(hash);
-    if (err) {
-      //   console.log(err);
-      res.json({ err });
-    } else {
-      database.getConnection(function (err, connection) {
-        if (err) {
-          //   console.log(err);
-          res.json({ err });
-          connection.release();
-        } else {
-          connection.query(
-            "UPDATE `Researcher` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Researcher`.`Email` = ?",
-            [
-              req.body.fname,
-              req.body.lname,
-              req.body.emailupdate,
-              hash,
-              req.body.modifydate,
-              req.body.EmailVerify,
-              req.body.email,
-            ],
-            function (err) {
-              if (err) {
-                res.json({ err });
-                connection.release();
-              } else {
-                // console.log("update success");
-                res.json({ status: "success" });
-                connection.release();
-              }
+  if(req.body.passWord === undefined)
+  {
+    database.getConnection(function (err, connection) {
+      if (err) {
+        //   console.log(err);
+        res.json({ err });
+        connection.release();
+      } else {
+        connection.query(
+          "UPDATE `Researcher` SET `fName` = ?, `lName` = ?, `Email` = ?, `phoneNumber` = ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Researcher`.`Email` = ?",
+          [
+            req.body.fname,
+            req.body.lname,
+            req.body.emailupdate,
+            req.body.phoneNumber,
+            req.body.modifydate,
+            req.body.EmailVerify,
+            req.body.email,
+          ],
+          function (err) {
+            if (err) {
+              // console.log(err);
+              res.json({ err });
+              connection.release();
+            } else {
+              // console.log("update success");
+              res.json({ status: "success" });
+              connection.release();
             }
-          );
-        }
-      });
-    }
-  });
+          }
+        );
+      }
+    });
+  }else{
+    bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
+      // console.log(hash);
+      if (err) {
+          // console.log(err);
+        res.json({ err });
+      } else {
+        database.getConnection(function (err, connection) {
+          if (err) {
+              // console.log(err);
+            res.json({ err });
+            connection.release();
+          } else {
+              connection.query(
+              "UPDATE `Researcher` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `phoneNumber`= ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Researcher`.`Email` = ?",
+              [
+                req.body.fname,
+                req.body.lname,
+                req.body.emailupdate,
+                hash,
+                req.body.phoneNumber,
+                req.body.modifydate,
+                req.body.EmailVerify,
+                req.body.email,
+              ],
+              function (err) {
+                if (err) {
+                  res.json({ err });
+                  connection.release();
+                } else {
+                  // console.log("update success");
+                  res.json({ status: "success" });
+                  connection.release();
+                }
+              }
+            );
+            
+          }
+        });
+      }
+    });
+  }
 });
 
 app.get("/getResearch", jsonParser, function (req, res) {
