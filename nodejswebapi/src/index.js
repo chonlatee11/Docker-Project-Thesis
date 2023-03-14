@@ -358,10 +358,10 @@ app.delete("/deleteResearch", jsonParser, function (req, res, next) {
 });
 
 app.patch("/updateResearch", jsonParser, function (req, res, next) {
-  // console.log(req.body.passWord);
+  console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
-  if(req.body.passWord === undefined)
+  if(req.body.passWord === '')
   {
     database.getConnection(function (err, connection) {
       if (err) {
