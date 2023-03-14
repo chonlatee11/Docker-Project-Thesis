@@ -1,12 +1,13 @@
 services:
   mysqldb:
     container_name: mariadbcontainer
-    image: "mariadb"
+    image: linuxserver/mariadb
     restart: 'unless-stopped'
     volumes: 
       # - $HOME/database:/var/lib/mysql/
-      - ./databasevol:/var/lib/mysql/
-      - ./database/db/initdb/:/docker-entrypoint-initdb.d
+      # - ./databasevol:/var/lib/mysql/
+      # - ./database/db/initdb/:/docker-entrypoint-initdb.d
+      - ./databasevol:/config
     environment:
       MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
       MYSQL_DATABASE: "${MYSQL_DATABASE}"
