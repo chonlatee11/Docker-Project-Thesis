@@ -140,6 +140,7 @@ app.post("/send-email/admin", function (req, res) {
 });
 
 app.get("/verify/admin:token", function (req, res) {
+  console.log(req.params.token);
   const token = req.params.token;
   jwt.verify(token, secret, function (err, decoded) {
     if (err) {
@@ -150,7 +151,7 @@ app.get("/verify/admin:token", function (req, res) {
     // console.log("🚀 ~ file: index.js:160 ~ jwt.verify ~ email:", email)
     database.getConnection(function (err, connection) {
       if (err) {
-        // console.log(err);
+        console.log(err);
         return res.send("เกิดข้อผิดพลาด" + err.message);
       }
       connection.query(
@@ -158,10 +159,10 @@ app.get("/verify/admin:token", function (req, res) {
         ["Verify", email],
         function (error) {
           if (error) {
-            // console.log(error);
+            console.log(error);
             return res.send("เกิดข้อผิดพลาด: " + error.message);
           }
-          // console.log('User registered:', email);
+          console.log('User registered:', email);
           res.send("ยืนยันอีเมลสำเร็จ");
         }
       );
