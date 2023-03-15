@@ -98,7 +98,7 @@ app.post("/loginADMIN", jsonParser, function (req, res, next) {
 });
 
 app.put("/AddAdmin", jsonParser, function (req, res, next) {
-  //   console.log(req.body);
+    // console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
   bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
@@ -190,47 +190,82 @@ app.delete("/deleteAdmin", jsonParser, function (req, res, next) {
 });
 
 app.patch("/updateAdmin", jsonParser, function (req, res, next) {
-  //   console.log(req.body);
+    console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
-  bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
-    // console.log(hash);
-    if (err) {
-      //   console.log(err);
-      res.json({ err });
-    } else {
-      database.getConnection(function (err, connection) {
-        if (err) {
-          //   console.log(err);
-          res.json({ err });
-          connection.release();
-        } else {
-          connection.query(
-            "UPDATE `Admin` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `modifydate` = ?, `EmailVerify` = ? WHERE `Admin`.`Email` = ?",
-            [
-              req.body.fname,
-              req.body.lname,
-              req.body.emailupdate,
-              hash,
-              req.body.modifydate,
-              req.body.EmailVerify,
-              req.body.email,
-            ],
-            function (err) {
-              if (err) {
-                res.json({ err });
-                connection.release();
-              } else {
-                // console.log("update success");
-                res.json({ status: "success" });
-                connection.release();
-              }
+  if(req.body.password === '')
+  {
+    database.getConnection(function (err, connection) {
+      if (err) {
+        //   console.log(err);
+        res.json({ err });
+        connection.release();
+      } else {
+        connection.query(
+          "UPDATE `Admin` SET `fName` = ?, `lName` = ?, `Email` = ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Admin`.`Email` = ?",
+          [
+            req.body.fname,
+            req.body.lname,
+            req.body.emailupdate,
+            req.body.modifydate,
+            req.body.EmailVerify,
+            req.body.email,
+          ],
+          function (err) {
+            if (err) {
+              // console.log(err);
+              res.json({ err });
+              connection.release();
+            } else {
+              // console.log("update success");
+              res.json({ status: "success" });
+              connection.release();
             }
-          );
-        }
-      });
-    }
-  });
+          }
+        );
+      }
+    });
+  }else{
+    bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
+      // console.log(hash);
+      if (err) {
+          // console.log(err);
+        res.json({ err });
+      } else {
+        database.getConnection(function (err, connection) {
+          if (err) {
+              // console.log(err);
+            res.json({ err });
+            connection.release();
+          } else {
+              connection.query(
+              "UPDATE `Admin` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Admin`.`Email` = ?",
+              [
+                req.body.fname,
+                req.body.lname,
+                req.body.emailupdate,
+                hash,
+                req.body.modifydate,
+                req.body.EmailVerify,
+                req.body.email,
+              ],
+              function (err) {
+                if (err) {
+                  res.json({ err });
+                  connection.release();
+                } else {
+                  // console.log("update success");
+                  res.json({ status: "success" });
+                  connection.release();
+                }
+              }
+            );
+            
+          }
+        });
+      }
+    });
+  }
 });
 
 app.get("/getAdmin", jsonParser, function (req, res) {
@@ -260,7 +295,7 @@ app.get("/getAdmin", jsonParser, function (req, res) {
 });
 
 app.put("/AddResearch", jsonParser, function (req, res, next) {
-  //   console.log(req.body);
+    // console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
   bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
