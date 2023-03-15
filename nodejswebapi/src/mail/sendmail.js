@@ -6,7 +6,7 @@ import crypto from "crypto";
 dotenv.config();
 
 export const sendMailAdmin = (emailDestination, res) => {
-  const IP = process.env.IPDEV;
+  const IP = process.env.IP;
   const verificationToken = crypto.randomBytes(16).toString("hex");
   const token = jwt.sign({ emailDestination, verificationToken }, process.env.SECRET, { expiresIn: '5m' });
 
@@ -29,7 +29,7 @@ export const sendMailAdmin = (emailDestination, res) => {
 };
 
 export const sendMailResearch = (emailDestination, res) => {
-  const IP = process.env.IPDEV;
+  const IP = process.env.IP;
   // console.log(IP);
   const verificationToken = crypto.randomBytes(16).toString("hex");
   const token = jwt.sign({ emailDestination, verificationToken }, process.env.SECRET, { expiresIn: '5m' });
