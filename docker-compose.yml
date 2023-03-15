@@ -85,7 +85,7 @@ services:
     volumes:
       # - $HOME/nodeimagevol:/code
       # - $HOME/nodeimagevol/image:/code/src/image/
-      - ./nodeimagevol/image:/usr/code/src/image/
+      - ./nodeimagevolume/image:/usr/code/src/image/
     ports:
       - 3002:3002
     expose:
