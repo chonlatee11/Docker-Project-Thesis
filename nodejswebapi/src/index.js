@@ -12,13 +12,15 @@ const jsonParser = bodyParser.json();
 
 dotenv.config();
 const PORT = process.env.SERVER_PORT || 3000;
-const myip = process.env.IP;
+const myip = process.env.IPDEV;
 const app = express();
 const secret = process.env.SECRET;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-app.get("/",(req, res) => { res.send("SERVER IS UP") });
+app.get("/", (req, res) => {
+  res.send("SERVER IS UP");
+});
 
 app.post("/loginADMIN", jsonParser, function (req, res, next) {
   //   console.log(req.body);
@@ -98,7 +100,7 @@ app.post("/loginADMIN", jsonParser, function (req, res, next) {
 });
 
 app.put("/AddAdmin", jsonParser, function (req, res, next) {
-    // console.log(req.body);
+  // console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
   bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
@@ -132,35 +134,39 @@ app.put("/AddAdmin", jsonParser, function (req, res, next) {
   });
 });
 
-app.post('/send-email/admin', function(req, res) {
+app.post("/send-email/admin", function (req, res) {
   const emailDestination = req.body.email;
-  sendMailAdmin(emailDestination, res)
+  sendMailAdmin(emailDestination, res);
 });
 
-app.get('/verify/admin:token', function(req, res) {
+app.get("/verify/admin:token", function (req, res) {
   const token = req.params.token;
-  jwt.verify(token, secret, function(err, decoded) {
+  jwt.verify(token, secret, function (err, decoded) {
     if (err) {
       // console.log(err);
-      return res.send('Error: ' + err.message);
+      return res.send("Error: " + err.message);
     }
     const email = decoded.emailDestination;
     // console.log("🚀 ~ file: index.js:160 ~ jwt.verify ~ email:", email)
-    database.getConnection(function(err, connection) {
+    database.getConnection(function (err, connection) {
       if (err) {
         // console.log(err);
-        return res.send('เกิดข้อผิดพลาด' + err.message);
+        return res.send("เกิดข้อผิดพลาด" + err.message);
       }
-    connection.query('UPDATE `Admin` SET `EmailVerify` = ? WHERE `Admin`.`Email` = ?', ['Verify' ,email], function(error) {
-      if (error) {
-        // console.log(error);
-        return res.send('เกิดข้อผิดพลาด: ' + error.message);
-      }
-      // console.log('User registered:', email);
-      res.send('ยืนยันอีเมลสำเร็จ');
+      connection.query(
+        "UPDATE `Admin` SET `EmailVerify` = ? WHERE `Admin`.`Email` = ?",
+        ["Verify", email],
+        function (error) {
+          if (error) {
+            // console.log(error);
+            return res.send("เกิดข้อผิดพลาด: " + error.message);
+          }
+          // console.log('User registered:', email);
+          res.send("ยืนยันอีเมลสำเร็จ");
+        }
+      );
     });
   });
-});
 });
 
 app.delete("/deleteAdmin", jsonParser, function (req, res, next) {
@@ -190,11 +196,10 @@ app.delete("/deleteAdmin", jsonParser, function (req, res, next) {
 });
 
 app.patch("/updateAdmin", jsonParser, function (req, res, next) {
-    console.log(req.body);
+  console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
-  if(req.body.password === '')
-  {
+  if (req.body.password === "") {
     database.getConnection(function (err, connection) {
       if (err) {
         //   console.log(err);
@@ -225,20 +230,20 @@ app.patch("/updateAdmin", jsonParser, function (req, res, next) {
         );
       }
     });
-  }else{
+  } else {
     bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
       // console.log(hash);
       if (err) {
-          // console.log(err);
+        // console.log(err);
         res.json({ err });
       } else {
         database.getConnection(function (err, connection) {
           if (err) {
-              // console.log(err);
+            // console.log(err);
             res.json({ err });
             connection.release();
           } else {
-              connection.query(
+            connection.query(
               "UPDATE `Admin` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Admin`.`Email` = ?",
               [
                 req.body.fname,
@@ -260,7 +265,6 @@ app.patch("/updateAdmin", jsonParser, function (req, res, next) {
                 }
               }
             );
-            
           }
         });
       }
@@ -295,7 +299,7 @@ app.get("/getAdmin", jsonParser, function (req, res) {
 });
 
 app.put("/AddResearch", jsonParser, function (req, res, next) {
-    // console.log(req.body);
+  // console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
   bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
@@ -335,35 +339,39 @@ app.put("/AddResearch", jsonParser, function (req, res, next) {
   });
 });
 
-app.post('/send-email/research', function(req, res) {
+app.post("/send-email/research", function (req, res) {
   const emailDestination = req.body.email;
-  sendMailResearch(emailDestination, res)
+  sendMailResearch(emailDestination, res);
 });
 
-app.get('/verify/research:token', function(req, res) {
+app.get("/verify/research:token", function (req, res) {
   const token = req.params.token;
-  jwt.verify(token, secret, function(err, decoded) {
+  jwt.verify(token, secret, function (err, decoded) {
     if (err) {
       // console.log(err);
-      return res.send('Error: ' + err.message);
+      return res.send("Error: " + err.message);
     }
     const email = decoded.emailDestination;
     // console.log("🚀 ~ file: index.js:160 ~ jwt.verify ~ email:", email)
-    database.getConnection(function(err, connection) {
+    database.getConnection(function (err, connection) {
       if (err) {
         // console.log(err);
-        return res.send('เกิดข้อผิดพลาด' + err.message);
+        return res.send("เกิดข้อผิดพลาด" + err.message);
       }
-    connection.query('UPDATE `Researcher` SET `EmailVerify` = ? WHERE `Researcher`.`Email` = ?', ['Verify' ,email], function(error) {
-      if (error) {
-        // console.log(error);
-        return res.send('เกิดข้อผิดพลาด: ' + error.message);
-      }
-      // console.log('User registered:', email);
-      res.send('ยืนยันอีเมลสำเร็จ');
+      connection.query(
+        "UPDATE `Researcher` SET `EmailVerify` = ? WHERE `Researcher`.`Email` = ?",
+        ["Verify", email],
+        function (error) {
+          if (error) {
+            // console.log(error);
+            return res.send("เกิดข้อผิดพลาด: " + error.message);
+          }
+          // console.log('User registered:', email);
+          res.send("ยืนยันอีเมลสำเร็จ");
+        }
+      );
     });
   });
-});
 });
 
 app.delete("/deleteResearch", jsonParser, function (req, res, next) {
@@ -393,11 +401,10 @@ app.delete("/deleteResearch", jsonParser, function (req, res, next) {
 });
 
 app.patch("/updateResearch", jsonParser, function (req, res, next) {
-  console.log(req.body);
+  // console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.password;
-  if(req.body.passWord === '')
-  {
+  if (req.body.passWord === "") {
     database.getConnection(function (err, connection) {
       if (err) {
         //   console.log(err);
@@ -429,20 +436,20 @@ app.patch("/updateResearch", jsonParser, function (req, res, next) {
         );
       }
     });
-  }else{
+  } else {
     bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
       // console.log(hash);
       if (err) {
-          // console.log(err);
+        // console.log(err);
         res.json({ err });
       } else {
         database.getConnection(function (err, connection) {
           if (err) {
-              // console.log(err);
+            // console.log(err);
             res.json({ err });
             connection.release();
           } else {
-              connection.query(
+            connection.query(
               "UPDATE `Researcher` SET `fName` = ?, `lName` = ?, `Email` = ?, `passWord` = ?, `phoneNumber`= ?, `Modifydate` = ? ,`EmailVerify` = ? WHERE `Researcher`.`Email` = ?",
               [
                 req.body.fname,
@@ -465,7 +472,6 @@ app.patch("/updateResearch", jsonParser, function (req, res, next) {
                 }
               }
             );
-            
           }
         });
       }
@@ -622,8 +628,6 @@ app.post("/ResearcherLogin", jsonParser, function (req, res, next) {
   });
 });
 
-
-
 app.post("/getSelectUser", jsonParser, function (req, res) {
   //   console.log(req.body);
   database.getConnection(function (err, connection) {
@@ -687,47 +691,82 @@ app.post("/getSelectResearch", jsonParser, function (req, res) {
 });
 
 app.patch("/updataSelectResearch", jsonParser, function (req, res) {
-  //   console.log(req.body);
+  // console.log(req.body);
   const saltRounds = 10;
   const myPlaintextPassword = req.body.passWord;
-  bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
-    // console.log(hash);
-    if (err) {
-      //   console.log(err);
-      res.json({ err });
-    } else {
-      database.getConnection(function (err, connection) {
-        if (err) {
-          //   console.log(err);
-          res.json({ err });
-          connection.release();
-        } else {
-          connection.query(
-            "UPDATE `Researcher` SET `Email` = ?, `passWord` = ?, `fName` = ?, `lName` = ?, `Modifydate` = ?, `phoneNumber` = ? WHERE `Researcher`.`researcherID` = ?",
-            [
-              req.body.Email,
-              hash,
-              req.body.fName,
-              req.body.lName,
-              req.body.Modifydate,
-              req.body.phoneNumber,
-              req.body.researcherID,
-            ],
-            function (err) {
-              if (err) {
-                res.json({ err });
-                connection.release();
-              } else {
-                // console.log("update success");
-                res.json({ status: "success" });
-                connection.release();
-              }
+  if (req.body.passWord === "") {
+    database.getConnection(function (err, connection) {
+      if (err) {
+        //   console.log(err);
+        res.json({ err });
+        connection.release();
+      } else {
+        connection.query(
+          "UPDATE `Researcher` SET `Email` = ?, `fName` = ?, `lName` = ?, `Modifydate` = ?, `phoneNumber` = ?, `EmailVerify` = ? WHERE `Researcher`.`researcherID` = ?",
+          [
+            req.body.Email,
+            req.body.fName,
+            req.body.lName,
+            req.body.Modifydate,
+            req.body.phoneNumber,
+            req.body.EmailVerify,
+            req.body.researcherID,
+          ],
+          function (err) {
+            if (err) {
+              // console.log(err);
+              res.json({ err });
+              connection.release();
+            } else {
+              // console.log("update success");
+              res.json({ status: "success" });
+              connection.release();
             }
-          );
-        }
-      });
-    }
-  });
+          }
+        );
+      }
+    });
+  } else {
+    bcrypt.hash(myPlaintextPassword, saltRounds, function (err, hash) {
+      // console.log(hash);
+      if (err) {
+        // console.log(err);
+        res.json({ err });
+      } else {
+        database.getConnection(function (err, connection) {
+          if (err) {
+            // console.log(err);
+            res.json({ err });
+            connection.release();
+          } else {
+            connection.query(
+              "UPDATE `Researcher` SET `Email` = ?, `passWord` = ?, `fName` = ?, `lName` = ?, `Modifydate` = ?, `phoneNumber` = ?, `EmailVerify` = ? WHERE `Researcher`.`researcherID` = ?",
+              [
+                req.body.Email,
+                hash,
+                req.body.fName,
+                req.body.lName,
+                req.body.Modifydate,
+                req.body.phoneNumber,
+                req.body.EmailVerify,
+                req.body.researcherID,
+              ],
+              function (err) {
+                if (err) {
+                  res.json({ err });
+                  connection.release();
+                } else {
+                  // console.log("update success");
+                  res.json({ status: "success" });
+                  connection.release();
+                }
+              }
+            );
+          }
+        });
+      }
+    });
+  }
 });
 
 app.listen(PORT, () =>

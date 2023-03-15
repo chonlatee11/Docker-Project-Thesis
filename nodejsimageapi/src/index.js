@@ -18,7 +18,7 @@ dotenv.config();
 const jsonParser = bodyParser.json();
 const PORT = process.env.SERVER_PORT || 3002;
 const app = express();
-const myip = process.env.IP;
+const myip = process.env.IPDEV;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(fileUpload());
@@ -206,9 +206,8 @@ app.get("/getDisease", jsonParser, function (req, res, next) {
   
   app.get("/image/:filename", (req, res) => {
     const filePath = path.join(__dirname, "/image/", req.params.filename);
-    // console.log(filePath);
+    console.log(filePath);
     const fileType = mime.lookup(filePath);
-  
     fs.readFile(filePath, (err, data) => {
       if (err) throw err;
       res.writeHead(200, { "Content-Type": fileType });
