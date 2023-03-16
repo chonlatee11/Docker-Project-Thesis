@@ -22,7 +22,7 @@ const myip = process.env.IP;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(fileUpload());
-app.use(express.static(path.join(__dirname,"image")));
+app.use("/image",express.static(path.join(__dirname, "image")));
 
 app.get("/",(req,res) => { res.send( {message: 'UP'}) })
 
