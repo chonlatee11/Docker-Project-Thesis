@@ -19,9 +19,10 @@ const jsonParser = bodyParser.json();
 const PORT = process.env.SERVER_PORT || 3002;
 const app = express();
 const myip = process.env.IP;
-app.use(cors({ origin: ['http//:192.168.1.22', '*'] }));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(fileUpload());
+app.use(express.static(path.join(__dirname,"image")));
 
 app.get("/",(req,res) => { res.send( {message: 'UP'}) })
 
