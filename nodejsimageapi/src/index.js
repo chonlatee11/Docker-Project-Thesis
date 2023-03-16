@@ -44,7 +44,7 @@ app.get("/getDisease", jsonParser, function (req, res, next) {
               // console.log(data.length);
               for (let i = 0; i < data.length; i++) {
                 data[i].ImageUrl =
-                  `${myip}:3002/image/` + data[i].ImageName;
+                  `${myip}:3002/image/${data[i].ImageName}`;
               }
               res.json({ data });
               // connection.end();
@@ -191,7 +191,7 @@ app.get("/getDisease", jsonParser, function (req, res, next) {
             ],
             function (err) {
               if (err) {
-                res.json({ err });
+                res.json({ err });filename
                 connection.release();
               } else {
                 res.json({ status: "success" });
