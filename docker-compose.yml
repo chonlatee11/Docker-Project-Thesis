@@ -23,8 +23,8 @@ services:
     expose:
       - 3306
 
-  nodeappweb:
-    container_name: nodewebcontainer
+  nodewebapi:
+    container_name: nodewebapicontainer
     build: ./nodejswebapi/.
     image: nodewebapp:v1
     restart: 'unless-stopped'
@@ -117,7 +117,7 @@ services:
     networks:
       - webproxy
 
-  phpmyadmin:
+  phpyadmin:
     image: 'phpmyadmin/phpmyadmin'
     container_name: phpmyadmin
     restart: always
@@ -130,6 +130,17 @@ services:
         TZ: Asia/Bangkok
     depends_on:
         - mysqldb
+
+  nginx:
+    container_name: nginxcontainer
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./reactwebvol/dist:/usr/share/nginx/html
+    networks:
+      - internalnet
 
 networks:
   internalnet:
