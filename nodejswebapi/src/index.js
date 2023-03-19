@@ -509,7 +509,7 @@ app.get("/getResearch", jsonParser, function (req, res) {
 
 app.put("/HistoryDiseaseModify", jsonParser, function (req, res, next) {
   //   console.log(req.body);
-  const imagelink = `${myip}:3002/image/` + req.body.ImageNameUpdate;
+  const imagelink = + req.body.ImageNameUpdate;
   database.getConnection(function (err, connection) {
     if (err) {
       //   console.log(err);
