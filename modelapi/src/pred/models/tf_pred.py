@@ -36,6 +36,7 @@ def tf_predict(img_original):
     result = model.predict(img)
     print(result)
     probability = np.max(result * 100)
+    probability = round(probability, 2)
 
     imagenet_labels = load_labels()
     print(imagenet_labels)
