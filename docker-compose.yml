@@ -134,6 +134,7 @@ services:
   nginx:
     container_name: nginxcontainer
     image: nginx:latest
+    restart: always
     ports:
       - 80:80
     volumes:
