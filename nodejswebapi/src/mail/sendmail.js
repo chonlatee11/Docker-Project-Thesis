@@ -14,7 +14,7 @@ export const sendMailAdmin = (emailDestination, res) => {
     from: process.env.EMAIL_USERNAME,
     to: emailDestination,
     subject: "verify email",
-    html: `กรุณาคลิ๊ก <a href="${IP}/verify/admin${token}">ที่นี่</a> เพื่อยืนยันอีเมล์`,
+    html: `กรุณาคลิ๊ก <a href="${IP}:3000/verify/admin${token}">ที่นี่</a> เพื่อยืนยันอีเมล์`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -38,7 +38,7 @@ export const sendMailResearch = (emailDestination, res) => {
     from: process.env.EMAIL_USERNAME,
     to: emailDestination,
     subject: "verify email",
-    html: `กรุณาคลิ๊ก <a href="${IP}/verify/research${token}">ที่นี่</a> เพื่อยืนยันอีเมล์`,
+    html: `กรุณาคลิ๊ก <a href="${IP}:3000/verify/research${token}">ที่นี่</a> เพื่อยืนยันอีเมล์`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
