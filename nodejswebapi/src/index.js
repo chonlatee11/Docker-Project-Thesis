@@ -12,7 +12,7 @@ const jsonParser = bodyParser.json();
 
 dotenv.config();
 const PORT = process.env.SERVER_PORT || 3000;
-const myip = process.env.IP;
+const myip = process.env.IPDEV;
 const app = express();
 const secret = process.env.SECRET;
 app.use(cors({ origin: "*" }));

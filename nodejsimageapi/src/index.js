@@ -18,7 +18,7 @@ dotenv.config();
 const jsonParser = bodyParser.json();
 const PORT = process.env.SERVER_PORT || 3002;
 const app = express();
-const myip = process.env.IP;
+const myip = process.env.IPDEV;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(fileUpload());
