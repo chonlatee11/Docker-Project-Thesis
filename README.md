@@ -1,4 +1,4 @@
 # Docker-Project-Thesis
  ### run on docker container
- To run project can use cmd 
+ To run all services can use cmd 
  *docker compose up -d*
